@@ -1,0 +1,13 @@
+{
+  "vikunja_api": "http://vikunja:3456/api/v2",
+  "public_url": "http://localhost:8080",
+  "origins": [
+    "http://localhost:8080",
+    "http://127.0.0.1:4173"
+  ],
+  "owner_id": 1,
+  "telegram_bot_username": "your_bot_username",
+  "courses": [],
+  "students": [],
+  "replication_username": "copies-service"
+}

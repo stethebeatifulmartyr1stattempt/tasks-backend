@@ -1,0 +1,827 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "Tasks subject selection",
+    "version": "1.3.0"
+  },
+  "paths": {
+    "/campus/subjects": {
+      "get": {
+        "operationId": "campus-subjects-list",
+        "summary": "Read available subjects and my access",
+        "description": "Requires an authenticated roster member. Returns no other student data.",
+        "responses": {
+          "200": {
+            "description": "Saved selection",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CampusSubjects"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/campus/subjects/{subject}": {
+      "put": {
+        "operationId": "campus-subjects-select",
+        "summary": "Join or leave a subject",
+        "description": "Changes only the authenticated caller's read-only subject access. When joining, grants the personal-copy service write access to the caller's fixed, ownership-checked personal project. The session credential is not stored. Administrators retain access. Unknown body properties are rejected.",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "subject",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "selected"
+                ],
+                "properties": {
+                  "selected": {
+                    "type": "boolean"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Saved selection",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CampusSubject"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/campus/telegram": {
+      "get": {
+        "operationId": "campus-telegram-status",
+        "summary": "campus telegram status",
+        "description": "Requires the authenticated roster member. No user ID, Telegram ID or project ID is accepted.",
+        "responses": {
+          "200": {
+            "description": "Personal Telegram connection",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CampusTelegramStatus"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "operationId": "campus-telegram-disconnect",
+        "summary": "campus telegram disconnect",
+        "description": "Requires the authenticated roster member. No user ID, Telegram ID or project ID is accepted.",
+        "responses": {
+          "200": {
+            "description": "Personal Telegram connection",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CampusTelegramStatus"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/campus/telegram/link": {
+      "post": {
+        "operationId": "campus-telegram-link",
+        "summary": "campus telegram link",
+        "description": "Requires the authenticated roster member. No user ID, Telegram ID or project ID is accepted.",
+        "responses": {
+          "200": {
+            "description": "Personal Telegram connection",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CampusTelegramLink"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/campus/preferences": {
+      "get": {
+        "operationId": "campus-preferences-get",
+        "summary": "campus-preferences-get",
+        "description": "Authenticated roster member. Caller-scoped personal data. Admin routes require the configured owner.",
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CampusPreferences"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Sign in required"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "409": {
+            "description": "Concurrent edit; refresh"
+          },
+          "422": {
+            "description": "Invalid input"
+          },
+          "503": {
+            "description": "Service unavailable"
+          }
+        }
+      },
+      "put": {
+        "operationId": "campus-preferences-save",
+        "summary": "campus-preferences-save",
+        "description": "Authenticated roster member. Caller-scoped personal data. Admin routes require the configured owner.",
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CampusPreferences"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Sign in required"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "409": {
+            "description": "Concurrent edit; refresh"
+          },
+          "422": {
+            "description": "Invalid input"
+          },
+          "503": {
+            "description": "Service unavailable"
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CampusPreferences"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/campus/tasks": {
+      "get": {
+        "operationId": "campus-tasks",
+        "summary": "campus-tasks",
+        "description": "Authenticated roster member. Caller-scoped personal data. Admin routes require the configured owner.",
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CampusTasks"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Sign in required"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "409": {
+            "description": "Concurrent edit; refresh"
+          },
+          "422": {
+            "description": "Invalid input"
+          },
+          "503": {
+            "description": "Service unavailable"
+          }
+        }
+      }
+    },
+    "/campus/tasks/{task}/notifications": {
+      "put": {
+        "operationId": "campus-task-mute",
+        "summary": "campus-task-mute",
+        "description": "Authenticated roster member. Caller-scoped personal data. Admin routes require the configured owner.",
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CampusMuted"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Sign in required"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "409": {
+            "description": "Concurrent edit; refresh"
+          },
+          "422": {
+            "description": "Invalid input"
+          },
+          "503": {
+            "description": "Service unavailable"
+          }
+        },
+        "parameters": [
+          {
+            "in": "path",
+            "name": "task",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CampusMuted"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/campus/subjects/{subject}/variant": {
+      "put": {
+        "operationId": "campus-variant-save",
+        "summary": "campus-variant-save",
+        "description": "Authenticated roster member. Caller-scoped personal data. Admin routes require the configured owner.",
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CampusVariant"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Sign in required"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "409": {
+            "description": "Concurrent edit; refresh"
+          },
+          "422": {
+            "description": "Invalid input"
+          },
+          "503": {
+            "description": "Service unavailable"
+          }
+        },
+        "parameters": [
+          {
+            "in": "path",
+            "name": "subject",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CampusVariant"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/campus/admin/imports": {
+      "get": {
+        "operationId": "campus-imports",
+        "summary": "campus-imports",
+        "description": "Authenticated roster member. Caller-scoped personal data. Admin routes require the configured owner.",
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CampusImports"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Sign in required"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "409": {
+            "description": "Concurrent edit; refresh"
+          },
+          "422": {
+            "description": "Invalid input"
+          },
+          "503": {
+            "description": "Service unavailable"
+          }
+        }
+      }
+    },
+    "/campus/admin/reviews/{task}": {
+      "post": {
+        "operationId": "campus-review-resolve",
+        "summary": "campus-review-resolve",
+        "description": "Authenticated roster member. Caller-scoped personal data. Admin routes require the configured owner.",
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CampusOK"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Sign in required"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "409": {
+            "description": "Concurrent edit; refresh"
+          },
+          "422": {
+            "description": "Invalid input"
+          },
+          "503": {
+            "description": "Service unavailable"
+          }
+        },
+        "parameters": [
+          {
+            "in": "path",
+            "name": "task",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CampusReviewDecision"
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "CampusSubject": {
+        "type": "object",
+        "required": [
+          "id",
+          "title",
+          "project_id",
+          "view_id",
+          "selected",
+          "locked"
+        ],
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "title": {
+            "type": "string"
+          },
+          "project_id": {
+            "type": "integer"
+          },
+          "view_id": {
+            "type": "integer"
+          },
+          "selected": {
+            "type": "boolean"
+          },
+          "locked": {
+            "type": "boolean"
+          },
+          "variant": {
+            "type": "string"
+          }
+        }
+      },
+      "CampusSubjects": {
+        "type": "object",
+        "required": [
+          "subjects",
+          "administrator",
+          "personal_project_id",
+          "personal_view_id"
+        ],
+        "properties": {
+          "subjects": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/CampusSubject"
+            }
+          },
+          "administrator": {
+            "type": "boolean"
+          },
+          "personal_project_id": {
+            "type": "integer",
+            "description": "The authenticated student's own destination list."
+          },
+          "personal_view_id": {
+            "type": "integer",
+            "description": "The authenticated student's own destination list."
+          }
+        }
+      },
+      "CampusTelegramStatus": {
+        "type": "object",
+        "required": [
+          "connected",
+          "telegram_username",
+          "reminder_hours",
+          "timezone"
+        ],
+        "properties": {
+          "connected": {
+            "type": "boolean"
+          },
+          "telegram_username": {
+            "type": "string",
+            "nullable": true
+          },
+          "reminder_hours": {
+            "type": "array",
+            "items": {
+              "type": "integer"
+            }
+          },
+          "timezone": {
+            "type": "string"
+          }
+        }
+      },
+      "CampusTelegramLink": {
+        "type": "object",
+        "required": [
+          "url",
+          "expires_at"
+        ],
+        "properties": {
+          "url": {
+            "type": "string",
+            "format": "uri"
+          },
+          "expires_at": {
+            "type": "number",
+            "description": "Unix seconds"
+          }
+        }
+      },
+      "CampusPreferences": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "reminder_hours",
+          "quiet_enabled",
+          "quiet_start",
+          "quiet_end",
+          "digest_enabled",
+          "digest_time"
+        ],
+        "properties": {
+          "reminder_hours": {
+            "type": "array",
+            "items": {
+              "type": "integer"
+            }
+          },
+          "quiet_enabled": {
+            "type": "boolean"
+          },
+          "quiet_start": {
+            "type": "string"
+          },
+          "quiet_end": {
+            "type": "string"
+          },
+          "digest_enabled": {
+            "type": "boolean"
+          },
+          "digest_time": {
+            "type": "string"
+          }
+        }
+      },
+      "CampusTask": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "id",
+          "title",
+          "due_date",
+          "done",
+          "course_id",
+          "variant",
+          "muted"
+        ],
+        "properties": {
+          "id": {
+            "type": "integer"
+          },
+          "title": {
+            "type": "string"
+          },
+          "due_date": {
+            "type": "string"
+          },
+          "done": {
+            "type": "boolean"
+          },
+          "course_id": {
+            "type": "string"
+          },
+          "variant": {
+            "type": "string"
+          },
+          "muted": {
+            "type": "boolean"
+          }
+        }
+      },
+      "CampusTasks": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "tasks"
+        ],
+        "properties": {
+          "tasks": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/CampusTask"
+            }
+          }
+        }
+      },
+      "CampusVariant": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "variant"
+        ],
+        "properties": {
+          "variant": {
+            "type": "string"
+          }
+        }
+      },
+      "CampusMuted": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "muted"
+        ],
+        "properties": {
+          "muted": {
+            "type": "boolean"
+          }
+        }
+      },
+      "CampusReview": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "task_id",
+          "title",
+          "version",
+          "due_date",
+          "course_id",
+          "shareable",
+          "evidence",
+          "reason",
+          "sources"
+        ],
+        "properties": {
+          "task_id": {
+            "type": "integer"
+          },
+          "title": {
+            "type": "string"
+          },
+          "version": {
+            "type": "string"
+          },
+          "due_date": {
+            "type": "string"
+          },
+          "course_id": {
+            "type": "string"
+          },
+          "shareable": {
+            "type": "boolean"
+          },
+          "evidence": {
+            "type": "string"
+          },
+          "reason": {
+            "type": "string"
+          },
+          "sources": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "title",
+                "url"
+              ],
+              "properties": {
+                "title": {
+                  "type": "string"
+                },
+                "url": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      },
+      "CampusReviewDecision": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "action",
+          "version",
+          "title",
+          "course_id",
+          "due_date"
+        ],
+        "properties": {
+          "action": {
+            "type": "string",
+            "enum": [
+              "approve",
+              "dismiss"
+            ]
+          },
+          "version": {
+            "type": "string"
+          },
+          "title": {
+            "type": "string"
+          },
+          "course_id": {
+            "type": "string"
+          },
+          "due_date": {
+            "type": "string"
+          }
+        }
+      },
+      "CampusHealth": {
+        "type": "object",
+        "properties": {
+          "checked_at": {
+            "type": "string"
+          },
+          "errors": {
+            "type": "integer"
+          },
+          "pending": {
+            "type": "integer"
+          },
+          "stored_messages": {
+            "type": "integer"
+          },
+          "copies": {
+            "type": "integer"
+          },
+          "connected_users": {
+            "type": "integer"
+          },
+          "telegram": {
+            "type": "string"
+          },
+          "parser": {
+            "type": "string"
+          },
+          "google": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "state"
+              ],
+              "properties": {
+                "state": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      },
+      "CampusImports": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "services",
+          "reviews"
+        ],
+        "properties": {
+          "services": {
+            "type": "object",
+            "additionalProperties": {
+              "$ref": "#/components/schemas/CampusHealth"
+            }
+          },
+          "reviews": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/CampusReview"
+            }
+          }
+        }
+      },
+      "CampusOK": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "ok"
+        ],
+        "properties": {
+          "ok": {
+            "type": "boolean"
+          }
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,101 @@
+name: tasks-local
+services:
+  vikunja:
+    image: vikunja/vikunja:2.7.1@sha256:f7dc8428d10aef17f3075886d3c1c022f566ec456f88985f02c137f4fc534576
+    environment:
+      VIKUNJA_SERVICE_PUBLICURL: ${TASKS_PUBLIC_URL:-http://localhost:8080/}
+      VIKUNJA_SERVICE_JWTSECRET: ${VIKUNJA_SERVICE_JWTSECRET:?Set a fresh local JWT secret in .env}
+      VIKUNJA_DATABASE_TYPE: sqlite
+      VIKUNJA_DATABASE_PATH: /db/vikunja.db
+      VIKUNJA_SERVICE_ENABLEREGISTRATION: "true"
+    volumes:
+      - vikunja-db:/db
+      - vikunja-files:/app/vikunja/files
+  gateway:
+    image: caddy:2.11.7-alpine
+    ports: ["127.0.0.1:8080:80"]
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+      - ../tasks-frontend/dist:/srv:ro
+    depends_on: [vikunja]
+  importer:
+    profiles: [integrations]
+    build:
+      context: .
+      target: worker
+    command: [python, -m, uni_tasks.worker]
+    user: "1000:1000"
+    read_only: true
+    tmpfs: ["/tmp:mode=1777,size=256m"]
+    cap_drop: [ALL]
+    security_opt: [no-new-privileges:true]
+    volumes:
+      - ./runtime/integration-config:/config
+      - ./runtime/integration-state:/state
+      - ./runtime/integration-spool:/spool
+      - ./runtime/campus-state:/campus-state
+  parser:
+    profiles: [integrations]
+    build:
+      context: .
+      target: parser
+    command: [python, -m, uni_tasks.parser]
+    user: "1000:1000"
+    read_only: true
+    tmpfs: ["/tmp:mode=1777,size=256m"]
+    cap_drop: [ALL]
+    security_opt: [no-new-privileges:true]
+    volumes:
+      - ./runtime/codex-auth:/codex
+      - ./runtime/integration-spool:/spool
+    environment:
+      CODEX_HOME: /codex
+      PARSER_MODEL: gpt-6-luna
+  enrollment:
+    profiles: [integrations]
+    build:
+      context: .
+      target: worker
+    command: [python, -m, uni_tasks.enrollment]
+    user: "1000:1000"
+    read_only: true
+    tmpfs: ["/tmp:mode=1777,size=256m"]
+    cap_drop: [ALL]
+    security_opt: [no-new-privileges:true]
+    volumes:
+      - ./runtime/enrollment-config:/enrollment-config:ro
+      - ./runtime/notification-state:/notification-state
+      - ./runtime/campus-state:/campus-state
+  replication:
+    profiles: [integrations]
+    build:
+      context: .
+      target: worker
+    command: [python, -m, uni_tasks.replication]
+    user: "1000:1000"
+    read_only: true
+    tmpfs: ["/tmp:mode=1777,size=256m"]
+    cap_drop: [ALL]
+    security_opt: [no-new-privileges:true]
+    volumes:
+      - ./runtime/replication-config:/replication-config:ro
+      - ./runtime/replication-state:/replication-state
+      - ./runtime/campus-state:/campus-state
+  notifications:
+    profiles: [integrations]
+    build:
+      context: .
+      target: worker
+    command: [python, -m, uni_tasks.personal_notifications]
+    user: "1000:1000"
+    read_only: true
+    tmpfs: ["/tmp:mode=1777,size=256m"]
+    cap_drop: [ALL]
+    security_opt: [no-new-privileges:true]
+    volumes:
+      - ./runtime/notification-config:/notification-config:ro
+      - ./runtime/notification-state:/notification-state
+      - ./runtime/campus-state:/campus-state
+volumes:
+  vikunja-db:
+  vikunja-files:

@@ -1,0 +1,38 @@
+{
+  "url": "http://localhost:8080",
+  "vikunja_api": "http://vikunja:3456/api/v1",
+  "project_id": 1,
+  "view_id": 1,
+  "private_project_id": 2,
+  "private_view_id": 2,
+  "notification_project_id": 2,
+  "notification_view_id": 2,
+  "notification_vikunja_user_id": 1,
+  "timezone": "Europe/Kyiv",
+  "bot_username": "your_bot_username",
+  "google_accounts": [],
+  "gmail_senders": [],
+  "gmail_domains": [],
+  "telegram_titles": [],
+  "telegram_chats": [],
+  "owner_telegram_id": null,
+  "initial_days": 30,
+  "poll_seconds": 180,
+  "edit_lookback_days": 30,
+  "max_parse_batches_per_hour": 60,
+  "external_notifications": true,
+  "reminder_hours": [
+    24,
+    3,
+    1
+  ],
+  "course_names": [],
+  "course_contexts": {},
+  "discipline_routing": {
+    "enabled": true,
+    "google_enabled": false,
+    "review_project_id": 1,
+    "review_view_id": 1,
+    "courses": []
+  }
+}

@@ -1,0 +1,16 @@
+:80 {
+    handle /api/v2/campus/* {
+        reverse_proxy enrollment:8094
+    }
+    handle /api/* {
+        reverse_proxy vikunja:3456
+    }
+    handle /dav/* {
+        reverse_proxy vikunja:3456
+    }
+    handle {
+        root * /srv
+        try_files {path} /index.html
+        file_server
+    }
+}

@@ -1,0 +1,14 @@
+Tasks is an independent adaptation/integration, not an official Vikunja service.
+
+Vikunja upstream: https://github.com/go-vikunja/vikunja
+Upstream source revision: 5619c4a9f66ddfc13f7bbba24ada07c3e82ae7a0
+Upstream version: v2.7.1
+Upstream authors and existing copyright notices are retained in source files.
+License: GNU Affero General Public License, version 3 or later (AGPL-3.0-or-later).
+See LICENSE. Asset-specific notices and font licenses remain alongside the assets.
+
+The initial Tasks commit is a clean source snapshot prepared on 2026-11-01.
+It is not an imported upstream Git history and does not claim authorship of
+upstream code. Custom course, import-review, replication, calendar and Telegram
+integration code was added before the split; cleanup adds generic branding,
+sanitized examples, standalone build documentation and test-only CI.
